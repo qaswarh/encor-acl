@@ -1,135 +1,239 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ENCOR v1.2 — Cisco IOS Extended ACL &amp; Wildcard Packet Tester</title>
-  <script>
-    if (window.self === window.top) {
-      window.location.replace("https://github.io");
-    }
-  </script>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<div class="page-layout">
-  <!-- Left Column: Searchable ENCOR Security Knowledge Base -->
-  <aside class="glossary-panel">
-    <div class="glossary-search-wrap">
-      <input type="text" id="glossarySearch" class="glossary-search" placeholder="Filter Security terms (e.g., Wildcard, CoPP, TACACS, DAI)...">
-    </div>
-    <div id="glossaryNoResults" class="no-results hidden">No matching terms found.</div>
-
-    <div id="glossarySec">
-      <h2>ENCOR Security Knowledge Base</h2>
-      <p class="glossary-intro">ENCOR 350-401 v1.2 Domain 5 (Security — 20%) reference for ACLs, wildcard masks, CoPP, AAA, and Layer 2 security.</p>
-
-      <div class="glossary-cat">ACLs &amp; Wildcard Bitwise Logic</div>
-      <div class="term-card">
-        <h3>Extended Access Control List (ACL)</h3>
-        <p>Filters traffic based on <strong>Source IP, Destination IP, Protocol</strong> (IP, TCP, UDP, ICMP), and <strong>Layer 4 Port numbers</strong>. Best practice is placing Extended ACLs as close to the <strong>source</strong> as possible. Numbered <code>100–199</code> / <code>2000–2699</code> or Named.</p>
-      </div>
-      <div class="term-card">
-        <h3>Wildcard Mask (0 = Match, 1 = Ignore)</h3>
-        <p>A 32-bit inverse mask used in Cisco IOS ACLs and OSPF/EIGRP network statements. A <code>0</code> bit requires an exact binary match; a <code>1</code> bit ignores that bit position. Keywords: <code>host x.x.x.x</code> equals <code>0.0.0.0</code>, and <code>any</code> equals <code>0.0.0.0 255.255.255.255</code>.</p>
-      </div>
-      <div class="term-card">
-        <h3>Top-Down Processing &amp; Implicit Deny</h3>
-        <p>IOS evaluates Access Control Entries (ACEs) sequentially from lowest sequence number to highest and <strong>stops at the first match</strong>. Every ACL ends with an invisible <code>deny ip any any</code> (or <code>deny ipv6 any any</code>) that drops unmatched packets.</p>
-      </div>
-      <div class="term-card">
-        <h3>Non-Contiguous Wildcard Masks (Odd/Even Matching)</h3>
-        <p>Unlike subnet masks, wildcard bits do not need to be contiguous. For example, wildcard <code>0.0.0.254</code> checks only the last bit (<code>0</code> = matches all <strong>even</strong> fourth octets; <code>1</code> = matches all <strong>odd</strong> fourth octets).</p>
-      </div>
-
-      <div class="glossary-cat">Control Plane &amp; AAA Security</div>
-      <div class="term-card">
-        <h3>CoPP — Control Plane Policing</h3>
-        <p>Protects the router CPU (Control Plane) from DoS floods by applying a Modular QoS CLI (MQC) <code>service-policy</code> to the <code>control-plane</code> interface, rate-limiting management and routing protocol traffic (BGP, OSPF, SSH) while dropping excess.</p>
-      </div>
-      <div class="term-card">
-        <h3>TACACS+ vs. RADIUS (AAA)</h3>
-        <p><strong>TACACS+ (TCP 49):</strong> Cisco-enhanced protocol that encrypts the <strong>entire packet payload</strong> and separates Authentication, Authorization, and Accounting (supports per-command CLI authorization). <strong>RADIUS (UDP 1812/1813):</strong> Open standard that encrypts only the password field and combines Authentication + Authorization.</p>
-      </div>
-
-      <div class="glossary-cat">Layer 2 Infrastructure Security</div>
-      <div class="term-card">
-        <h3>DHCP Snooping</h3>
-        <p>Blocks rogue DHCP servers by classifying switch ports as <strong>Trusted</strong> (uplinks to legitimate DHCP servers) or <strong>Untrusted</strong> (access ports). Builds the <strong>DHCP Snooping Binding Table</strong> (MAC, IP, Lease, VLAN, Interface).</p>
-      </div>
-      <div class="term-card">
-        <h3>DAI — Dynamic ARP Inspection</h3>
-        <p>Prevents ARP spoofing / Man-in-the-Middle attacks by intercepting ARP packets on untrusted ports and validating IP-to-MAC bindings against the <strong>DHCP Snooping Binding Table</strong>.</p>
-      </div>
-      <div class="term-card">
-        <h3>IPSG — IP Source Guard</h3>
-        <p>Prevents IP address spoofing on untrusted Layer 2 access ports by dynamically filtering source IP (and optionally source MAC) traffic using the DHCP Snooping Binding Table.</p>
-      </div>
-    </div>
-  </aside>
-  <!-- Right Column: Interactive IOS ACL & Wildcard Simulator -->
-  <main class="visualizer-column">
-    <div class="net-widget">
-      <div class="sim-header">
-        <div>
-          <h1>Cisco IOS Extended ACL &amp; Wildcard Packet Tester</h1>
-          <p class="sim-sub">Build a test packet or choose a preset scenario to watch IOS evaluate ACEs top-to-bottom.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      ENCOR v1.2 — Cisco IOS Extended ACL &amp; Wildcard Packet Tester
+    </title>
+    <script>
+      if (window.self === window.top) {
+        window.location.replace("https://qaswarh.github.io/4any1/");
+      }
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-layout">
+      <!-- Left Column: Searchable ENCOR Security Knowledge Base -->
+      <aside class="glossary-panel">
+        <div class="glossary-search-wrap">
+          <input
+            type="text"
+            id="glossarySearch"
+            class="glossary-search"
+            placeholder="Filter Security terms (e.g., Wildcard, CoPP, TACACS, DAI)..."
+          />
         </div>
-        <select id="pktPreset" class="preset-select">
-          <option value="">Load Test Packet Preset...</option>
-          <option value="10.10.1.50|192.168.50.10|TCP|22">Scenario 1: Admin SSH to Server (ACE 10)</option>
-          <option value="10.10.2.50|192.168.50.10|TCP|22">Scenario 2: Unauthorized SSH Subnet (ACE 20)</option>
-          <option value="172.16.4.25|8.8.8.8|TCP|443">Scenario 3: HTTPS Web Outbound (ACE 30)</option>
-          <option value="10.10.1.12|10.10.99.5|ICMP|0">Scenario 4: Even-Host ICMP Diagnostic (ACE 40)</option>
-          <option value="10.10.1.13|10.10.99.5|ICMP|0">Scenario 5: Odd-Host ICMP Dropped (Implicit Deny)</option>
-          <option value="192.168.1.20|10.10.5.5|UDP|53">Scenario 6: Unmatched DNS Query (Implicit Deny)</option>
-        </select>
-      </div>
+        <div id="glossaryNoResults" class="no-results hidden">
+          No matching terms found.
+        </div>
 
-      <!-- Test Packet Builder -->
-      <div class="packet-box">
-        <div class="pkt-grid">
-          <div class="pkt-field">
-            <label for="pktSrc">Source IPv4</label>
-            <input type="text" id="pktSrc" class="pkt-input" value="10.10.1.50" placeholder="e.g., 10.10.1.50">
+        <div id="glossarySec">
+          <h2>ENCOR Security Knowledge Base</h2>
+          <p class="glossary-intro">
+            ENCOR 350-401 v1.2 Domain 5 (Security — 20%) reference for ACLs,
+            wildcard masks, CoPP, AAA, and Layer 2 security.
+          </p>
+
+          <div class="glossary-cat">ACLs &amp; Wildcard Bitwise Logic</div>
+          <div class="term-card">
+            <h3>Extended Access Control List (ACL)</h3>
+            <p>
+              Filters traffic based on
+              <strong>Source IP, Destination IP, Protocol</strong> (IP, TCP,
+              UDP, ICMP), and <strong>Layer 4 Port numbers</strong>. Best
+              practice is placing Extended ACLs as close to the
+              <strong>source</strong> as possible. Numbered
+              <code>100–199</code> / <code>2000–2699</code> or Named.
+            </p>
           </div>
-          <div class="pkt-field">
-            <label for="pktDst">Destination IPv4</label>
-            <input type="text" id="pktDst" class="pkt-input" value="192.168.50.10" placeholder="e.g., 192.168.50.10">
+          <div class="term-card">
+            <h3>Wildcard Mask (0 = Match, 1 = Ignore)</h3>
+            <p>
+              A 32-bit inverse mask used in Cisco IOS ACLs and OSPF/EIGRP
+              network statements. A <code>0</code> bit requires an exact binary
+              match; a <code>1</code> bit ignores that bit position. Keywords:
+              <code>host x.x.x.x</code> equals <code>0.0.0.0</code>, and
+              <code>any</code> equals <code>0.0.0.0 255.255.255.255</code>.
+            </p>
           </div>
-          <div class="pkt-field">
-            <label for="pktProto">Protocol</label>
-            <select id="pktProto" class="pkt-input">
-              <option value="TCP" selected>TCP</option>
-              <option value="UDP">UDP</option>
-              <option value="ICMP">ICMP</option>
+          <div class="term-card">
+            <h3>Top-Down Processing &amp; Implicit Deny</h3>
+            <p>
+              IOS evaluates Access Control Entries (ACEs) sequentially from
+              lowest sequence number to highest and
+              <strong>stops at the first match</strong>. Every ACL ends with an
+              invisible <code>deny ip any any</code> (or
+              <code>deny ipv6 any any</code>) that drops unmatched packets.
+            </p>
+          </div>
+          <div class="term-card">
+            <h3>Non-Contiguous Wildcard Masks (Odd/Even Matching)</h3>
+            <p>
+              Unlike subnet masks, wildcard bits do not need to be contiguous.
+              For example, wildcard <code>0.0.0.254</code> checks only the last
+              bit (<code>0</code> = matches all <strong>even</strong> fourth
+              octets; <code>1</code> = matches all <strong>odd</strong> fourth
+              octets).
+            </p>
+          </div>
+
+          <div class="glossary-cat">Control Plane &amp; AAA Security</div>
+          <div class="term-card">
+            <h3>CoPP — Control Plane Policing</h3>
+            <p>
+              Protects the router CPU (Control Plane) from DoS floods by
+              applying a Modular QoS CLI (MQC) <code>service-policy</code> to
+              the <code>control-plane</code> interface, rate-limiting management
+              and routing protocol traffic (BGP, OSPF, SSH) while dropping
+              excess.
+            </p>
+          </div>
+          <div class="term-card">
+            <h3>TACACS+ vs. RADIUS (AAA)</h3>
+            <p>
+              <strong>TACACS+ (TCP 49):</strong> Cisco-enhanced protocol that
+              encrypts the <strong>entire packet payload</strong> and separates
+              Authentication, Authorization, and Accounting (supports
+              per-command CLI authorization).
+              <strong>RADIUS (UDP 1812/1813):</strong> Open standard that
+              encrypts only the password field and combines Authentication +
+              Authorization.
+            </p>
+          </div>
+
+          <div class="glossary-cat">Layer 2 Infrastructure Security</div>
+          <div class="term-card">
+            <h3>DHCP Snooping</h3>
+            <p>
+              Blocks rogue DHCP servers by classifying switch ports as
+              <strong>Trusted</strong> (uplinks to legitimate DHCP servers) or
+              <strong>Untrusted</strong> (access ports). Builds the
+              <strong>DHCP Snooping Binding Table</strong> (MAC, IP, Lease,
+              VLAN, Interface).
+            </p>
+          </div>
+          <div class="term-card">
+            <h3>DAI — Dynamic ARP Inspection</h3>
+            <p>
+              Prevents ARP spoofing / Man-in-the-Middle attacks by intercepting
+              ARP packets on untrusted ports and validating IP-to-MAC bindings
+              against the <strong>DHCP Snooping Binding Table</strong>.
+            </p>
+          </div>
+          <div class="term-card">
+            <h3>IPSG — IP Source Guard</h3>
+            <p>
+              Prevents IP address spoofing on untrusted Layer 2 access ports by
+              dynamically filtering source IP (and optionally source MAC)
+              traffic using the DHCP Snooping Binding Table.
+            </p>
+          </div>
+        </div>
+      </aside>
+      <!-- Right Column: Interactive IOS ACL & Wildcard Simulator -->
+      <main class="visualizer-column">
+        <div class="net-widget">
+          <div class="sim-header">
+            <div>
+              <h1>Cisco IOS Extended ACL &amp; Wildcard Packet Tester</h1>
+              <p class="sim-sub">
+                Build a test packet or choose a preset scenario to watch IOS
+                evaluate ACEs top-to-bottom.
+              </p>
+            </div>
+            <select id="pktPreset" class="preset-select">
+              <option value="">Load Test Packet Preset...</option>
+              <option value="10.10.1.50|192.168.50.10|TCP|22">
+                Scenario 1: Admin SSH to Server (ACE 10)
+              </option>
+              <option value="10.10.2.50|192.168.50.10|TCP|22">
+                Scenario 2: Unauthorized SSH Subnet (ACE 20)
+              </option>
+              <option value="172.16.4.25|8.8.8.8|TCP|443">
+                Scenario 3: HTTPS Web Outbound (ACE 30)
+              </option>
+              <option value="10.10.1.12|10.10.99.5|ICMP|0">
+                Scenario 4: Even-Host ICMP Diagnostic (ACE 40)
+              </option>
+              <option value="10.10.1.13|10.10.99.5|ICMP|0">
+                Scenario 5: Odd-Host ICMP Dropped (Implicit Deny)
+              </option>
+              <option value="192.168.1.20|10.10.5.5|UDP|53">
+                Scenario 6: Unmatched DNS Query (Implicit Deny)
+              </option>
             </select>
           </div>
-          <div class="pkt-field">
-            <label for="pktPort">Dst Port (TCP/UDP)</label>
-            <input type="number" id="pktPort" class="pkt-input" value="22" min="0" max="65535">
+
+          <!-- Test Packet Builder -->
+          <div class="packet-box">
+            <div class="pkt-grid">
+              <div class="pkt-field">
+                <label for="pktSrc">Source IPv4</label>
+                <input
+                  type="text"
+                  id="pktSrc"
+                  class="pkt-input"
+                  value="10.10.1.50"
+                  placeholder="e.g., 10.10.1.50"
+                />
+              </div>
+              <div class="pkt-field">
+                <label for="pktDst">Destination IPv4</label>
+                <input
+                  type="text"
+                  id="pktDst"
+                  class="pkt-input"
+                  value="192.168.50.10"
+                  placeholder="e.g., 192.168.50.10"
+                />
+              </div>
+              <div class="pkt-field">
+                <label for="pktProto">Protocol</label>
+                <select id="pktProto" class="pkt-input">
+                  <option value="TCP" selected>TCP</option>
+                  <option value="UDP">UDP</option>
+                  <option value="ICMP">ICMP</option>
+                </select>
+              </div>
+              <div class="pkt-field">
+                <label for="pktPort">Dst Port (TCP/UDP)</label>
+                <input
+                  type="number"
+                  id="pktPort"
+                  class="pkt-input"
+                  value="22"
+                  min="0"
+                  max="65535"
+                />
+              </div>
+            </div>
+            <div id="pktError" class="pkt-error hidden">
+              Please enter valid dotted-decimal IPv4 addresses for Source and
+              Destination.
+            </div>
           </div>
+
+          <!-- Verdict Banner -->
+          <div class="verdict-banner" id="verdictBanner"></div>
+
+          <!-- Cisco IOS Extended ACL Table -->
+          <div class="acl-header-bar">
+            <span
+              ><code>ip access-list extended ENCOR-IN</code> (Top-Down
+              Evaluation)</span
+            >
+            <span class="acl-hint">First matching ACE wins</span>
+          </div>
+          <div class="acl-table" id="aclTable"></div>
+
+          <!-- 32-Bit Wildcard Bitwise Inspector -->
+          <div class="bit-inspector" id="bitInspector"></div>
         </div>
-        <div id="pktError" class="pkt-error hidden">Please enter valid dotted-decimal IPv4 addresses for Source and Destination.</div>
-      </div>
-
-      <!-- Verdict Banner -->
-      <div class="verdict-banner" id="verdictBanner"></div>
-
-      <!-- Cisco IOS Extended ACL Table -->
-      <div class="acl-header-bar">
-        <span><code>ip access-list extended ENCOR-IN</code> (Top-Down Evaluation)</span>
-        <span class="acl-hint">First matching ACE wins</span>
-      </div>
-      <div class="acl-table" id="aclTable"></div>
-
-      <!-- 32-Bit Wildcard Bitwise Inspector -->
-      <div class="bit-inspector" id="bitInspector"></div>
+      </main>
     </div>
-  </main>
-</div>
 
-<script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
